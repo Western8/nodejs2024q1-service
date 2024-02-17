@@ -5,4 +5,8 @@ export class AppService {
   getHello(): string {
     return 'Hello World!';
   }
+
+  getUser(id = undefined): string {
+    return 'All users!';
+  }
 }
