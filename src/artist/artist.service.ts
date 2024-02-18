@@ -4,12 +4,13 @@ import { UpdateArtistDto } from './dto/update-artist.dto';
 import { IArtistRes, Artist } from './entities/artist.entity';
 import { isUUID } from 'src/utils/utils';
 import { instanceToPlain } from 'class-transformer';
+import { db } from 'src/utils/db';
 
 @Injectable()
 export class ArtistService {
-  artists: Artist[] = [];
+  //artists: Artist[] = [];
   getAll() {
-    const artists = this.artists.map(item => instanceToPlain(item));
+    const artists = db.artists.map(item => instanceToPlain(item));
     return artists;
   }
 
@@ -18,7 +19,7 @@ export class ArtistService {
     if (!isUUID(id)) {
       return { code: 400 }
     }
-    const artist = this.artists.find(item => item.id === id);
+    const artist = db.artists.find(item => item.id === id);
     if (!artist) {
       return { code: 404 }
     }
@@ -42,7 +43,7 @@ export class ArtistService {
       grammy: createArtistDto.grammy,
     }
     const artist: Artist = new Artist(params);
-    this.artists.push(artist);
+    db.artists.push(artist);
     artistRes.artist = instanceToPlain(artist);
     return artistRes;
   }
@@ -68,7 +69,7 @@ export class ArtistService {
         message: 'Not valid fields',
       }
     }
-    const artist = this.artists.find(item => item.id === id);
+    const artist = db.artists.find(item => item.id === id);
     if (!artist) {
       return { code: 404 }
     }
@@ -83,11 +84,17 @@ export class ArtistService {
     if (!isUUID(id)) {
       return { code: 400 }
     }
-    const index = this.artists.findIndex(item => item.id === id);
+    const index = db.artists.findIndex(item => item.id === id);
     if (index === -1) {
       return { code: 404 }
     }
-    this.artists.splice(index, 1);
+    db.artists.splice(index, 1);
+
+    const albums = db.albums.filter(item => item.artistId === id);
+    albums.forEach(item => item.artistId = null);
+    const tracks = db.tracks.filter(item => item.artistId === id);
+    tracks.forEach(item => item.artistId = null);
+
     return artistRes;
   }
 }

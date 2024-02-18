@@ -4,12 +4,14 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { IUserRes, User } from './entities/user.entity';
 import { isUUID } from 'src/utils/utils';
 import { instanceToPlain } from 'class-transformer';
+import { db } from 'src/utils/db';
 
 @Injectable()
 export class UserService {
-  users: User[] = [];
+  //users: User[] = [];
   getAll() {
-    const users = this.users.map(item => instanceToPlain(item));
+    //const users = this.users.map(item => instanceToPlain(item));
+    const users = db.users.map(item => instanceToPlain(item));
     return users;
   }
 
@@ -18,7 +20,8 @@ export class UserService {
     if (!isUUID(id)) {
       return { code: 400 }
     }
-    const user = this.users.find(item => item.id === id);
+    //const user = this.users.find(item => item.id === id);
+    const user = db.users.find(item => item.id === id);
     if (!user) {
       return { code: 404 }
     }
@@ -46,7 +49,8 @@ export class UserService {
       updatedAt: new Date().getTime(), // timestamp of last update 
     }
     const user: User = new User(params);
-    this.users.push(user);
+    //this.users.push(user);
+    db.users.push(user);
     userRes.user = instanceToPlain(user);
     return userRes;
   }
@@ -65,7 +69,8 @@ export class UserService {
         message: 'Not valid fields',
        }
     }
-    const user = this.users.find(item => item.id === id);
+    //const user = this.users.find(item => item.id === id);
+    const user = db.users.find(item => item.id === id);
     if (!user) {
       return { code: 404 }
     }
@@ -84,11 +89,12 @@ export class UserService {
     if (!isUUID(id)) {
       return { code: 400 }
     }
-    const index = this.users.findIndex(item => item.id === id);
+    //const index = this.users.findIndex(item => item.id === id);
+    const index = db.users.findIndex(item => item.id === id);
     if (index === -1) {
       return { code: 404 }
     }
-    this.users.splice(index, 1);
+    db.users.splice(index, 1);
     return userRes;
   }
 }

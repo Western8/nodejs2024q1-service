@@ -1,10 +1,8 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Res, BadRequestException, NotFoundException, ForbiddenException, Put, HttpCode } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, BadRequestException, NotFoundException, Put, HttpCode } from '@nestjs/common';
 import { ArtistService } from './artist.service';
 import { CreateArtistDto } from './dto/create-artist.dto';
 import { UpdateArtistDto } from './dto/update-artist.dto';
-import { response } from 'express';
 import { IArtistRes } from './entities/artist.entity';
-import { classToPlain, instanceToPlain, serialize } from 'class-transformer';
 
 @Controller('artist')
 export class ArtistController {

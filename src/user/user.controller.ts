@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Res, BadRequestException, NotFoundException, ForbiddenException, Put, HttpCode } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, BadRequestException, NotFoundException, ForbiddenException, Put, HttpCode } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
