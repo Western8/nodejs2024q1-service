@@ -4,6 +4,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { response } from 'express';
 import { IUserRes } from './entities/user.entity';
+import { classToPlain, instanceToPlain, serialize } from 'class-transformer';
 
 @Controller('user')
 export class UserController {
