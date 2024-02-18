@@ -2,9 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, Res, BadRequestExcep
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { response } from 'express';
 import { IUserRes } from './entities/user.entity';
-import { classToPlain, instanceToPlain, serialize } from 'class-transformer';
 
 @Controller('user')
 export class UserController {
@@ -39,7 +37,7 @@ export class UserController {
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     const userRes: IUserRes = this.userService.update(id, updateUserDto);
     if (userRes.code === 400) {
-      throw new BadRequestException('Invalid user id');
+      throw new BadRequestException(userRes.message);
     } else if ((userRes.code === 404)) {
       throw new NotFoundException(`User with id ${id} not found`);
     } else if ((userRes.code === 403)) {

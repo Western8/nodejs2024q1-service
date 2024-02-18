@@ -46,32 +46,24 @@ export class UserService {
       updatedAt: new Date().getTime(), // timestamp of last update 
     }
     const user: User = new User(params);
-    /*
-    user.id = crypto.randomUUID(); // uuid v4
-    user.login = createUserDto.login;
-    user.password = createUserDto.password;
-    user.version = 0; // integer number, increments on update
-    user.createdAt = new Date().getTime(); // timestamp of creation
-    user.updatedAt = new Date().getTime(); // timestamp of last update 
-    */
     this.users.push(user);
     userRes.user = instanceToPlain(user);
-    console.log('user ', user);
-    console.log('userRes.user ', userRes.user);
-    console.log('typeof user ', typeof user);
-    console.log('typeof userRes.user ', typeof userRes.user);
-
-    //userRes.user = user;
     return userRes;
   }
 
   update(id: string, updateUserDto: UpdateUserDto) {
     const userRes: IUserRes = { code: 200 };
     if (!isUUID(id)) {
-      return { code: 400 }
+      return {
+        code: 400,
+        message: 'Not valid id',
+      }
     }
     if (!(updateUserDto.oldPassword && updateUserDto.oldPassword)) {
-      return { code: 400 }
+      return { 
+        code: 400,
+        message: 'Not valid fields',
+       }
     }
     const user = this.users.find(item => item.id === id);
     if (!user) {

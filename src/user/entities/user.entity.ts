@@ -30,5 +30,6 @@ export class UserRes {
 */
 export interface IUserRes {
   code: number,
+  message?: string,
   user?: Record<string, any>,
 }
