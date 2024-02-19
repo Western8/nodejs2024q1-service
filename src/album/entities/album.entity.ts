@@ -13,7 +13,7 @@ export class Album {
 }
 
 export interface IAlbumRes {
-  code: number,
-  message?: string,
-  album?: Record<string, any>,
+  code: number;
+  message?: string;
+  album?: Record<string, any>;
 }

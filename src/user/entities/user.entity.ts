@@ -1,4 +1,4 @@
-import { Exclude } from "class-transformer";
+import { Exclude } from 'class-transformer';
 
 export class User {
   id: string; // uuid v4
@@ -15,7 +15,7 @@ export class User {
     this.updatedAt = params.updatedAt;
     this.password = params.password;
   }
-  
+
   @Exclude()
   password: string;
 }
@@ -29,7 +29,7 @@ export class UserRes {
 }
 */
 export interface IUserRes {
-  code: number,
-  message?: string,
-  user?: Record<string, any>,
+  code: number;
+  message?: string;
+  user?: Record<string, any>;
 }

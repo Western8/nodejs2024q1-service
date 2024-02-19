@@ -10,18 +10,18 @@ import { db } from 'src/utils/db';
 export class AlbumService {
   //albums: Album[] = [];
   getAll() {
-    const albums = db.albums.map(item => instanceToPlain(item));
+    const albums = db.albums.map((item) => instanceToPlain(item));
     return albums;
   }
 
   getOne(id: string): IAlbumRes {
     const albumRes: IAlbumRes = { code: 200 };
     if (!isUUID(id)) {
-      return { code: 400 }
+      return { code: 400 };
     }
-    const album = db.albums.find(item => item.id === id);
+    const album = db.albums.find((item) => item.id === id);
     if (!album) {
-      return { code: 404 }
+      return { code: 404 };
     }
     albumRes.album = instanceToPlain(album);
     return albumRes;
@@ -30,22 +30,30 @@ export class AlbumService {
   create(createAlbumDto: CreateAlbumDto): IAlbumRes {
     const albumRes: IAlbumRes = { code: 200 };
     const keys: string[] = Object.keys(createAlbumDto);
-    if (!(keys.includes('name') && keys.includes('year') && keys.includes('artistId'))) {
-      return { code: 400 }
+    if (
+      !(
+        keys.includes('name') &&
+        keys.includes('year') &&
+        keys.includes('artistId')
+      )
+    ) {
+      return { code: 400 };
     }
-    if (!(createAlbumDto.name && (typeof(createAlbumDto.year) === 'number'))) {
-      return { code: 400 }
+    if (!(createAlbumDto.name && typeof createAlbumDto.year === 'number')) {
+      return { code: 400 };
     }
+    /*
     if (!isUUID(createAlbumDto.artistId)) {
-      return { code: 400 }
+      return { code: 400 };
     }
+    */
 
     const params = {
       id: crypto.randomUUID(), // uuid v4
       name: createAlbumDto.name,
       year: createAlbumDto.year,
       artistId: createAlbumDto.artistId,
-    }
+    };
     const album: Album = new Album(params);
     db.albums.push(album);
     albumRes.album = instanceToPlain(album);
@@ -58,31 +66,39 @@ export class AlbumService {
       return {
         code: 400,
         message: 'Not valid id',
-      }
+      };
     }
     const keys: string[] = Object.keys(updateAlbumDto);
-    if (!(keys.includes('name') && keys.includes('year') && keys.includes('artistId'))) {
-      return { 
-        code: 400,
-        message: 'Not valid fields',
-       }
-    }
-    if (!(updateAlbumDto.name && (typeof(updateAlbumDto.year) === 'number'))) {
+    if (
+      !(
+        keys.includes('name') &&
+        keys.includes('year') &&
+        keys.includes('artistId')
+      )
+    ) {
       return {
         code: 400,
         message: 'Not valid fields',
-      }
+      };
     }
+    if (!(updateAlbumDto.name && typeof updateAlbumDto.year === 'number')) {
+      return {
+        code: 400,
+        message: 'Not valid fields',
+      };
+    }
+    /*
     if (!isUUID(updateAlbumDto.artistId)) {
       return {
         code: 400,
         message: 'Not valid fields (artistId)',
-      }
+      };
     }
-    
-    const album = db.albums.find(item => item.id === id);
+    */
+
+    const album = db.albums.find((item) => item.id === id);
     if (!album) {
-      return { code: 404 }
+      return { code: 404 };
     }
     album.name = updateAlbumDto.name;
     album.year = updateAlbumDto.year;
@@ -94,17 +110,17 @@ export class AlbumService {
   delete(id: string) {
     const albumRes: IAlbumRes = { code: 204 };
     if (!isUUID(id)) {
-      return { code: 400 }
+      return { code: 400 };
     }
-    const index = db.albums.findIndex(item => item.id === id);
+    const index = db.albums.findIndex((item) => item.id === id);
     if (index === -1) {
-      return { code: 404 }
+      return { code: 404 };
     }
     db.albums.splice(index, 1);
 
-    const tracks = db.tracks.filter(item => item.albumId === id);
-    tracks.forEach(item => item.albumId = null);
-    const indexFavs = db.favs.albums.findIndex(item => item === id);
+    const tracks = db.tracks.filter((item) => item.albumId === id);
+    tracks.forEach((item) => (item.albumId = null));
+    const indexFavs = db.favs.albums.findIndex((item) => item === id);
     if (indexFavs !== -1) {
       db.favs.albums.splice(indexFavs, 1);
     }

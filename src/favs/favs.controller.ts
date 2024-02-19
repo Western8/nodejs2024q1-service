@@ -1,4 +1,14 @@
-import { Controller, Get, Post, Body, Param, Delete, BadRequestException, NotFoundException, Put, HttpCode, UnprocessableEntityException } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Param,
+  Delete,
+  BadRequestException,
+  NotFoundException,
+  HttpCode,
+  UnprocessableEntityException,
+} from '@nestjs/common';
 import { FavsService } from './favs.service';
 import { IFavsRes } from './entities/favs.entity';
 import { favsDb } from 'src/utils/db';
@@ -6,12 +16,12 @@ import { favsDb } from 'src/utils/db';
 @Controller('favs')
 export class FavsController {
   constructor(private readonly favsService: FavsService) {}
-  
+
   @Get()
   getAll() {
     return this.favsService.getAll();
   }
-  
+
   @Post(':resource/:id')
   add(@Param('resource') resource: string, @Param('id') id: string) {
     const resourceDb = favsDb[resource];
@@ -37,7 +47,7 @@ export class FavsController {
     const favsRes: IFavsRes = this.favsService.delete(resourceDb, id);
     if (favsRes.code === 400) {
       throw new BadRequestException('Not valid favs id');
-    } else if ((favsRes.code === 404)) {
+    } else if (favsRes.code === 404) {
       throw new NotFoundException(`Favs with id ${id} not found`);
     }
   }

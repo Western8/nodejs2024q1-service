@@ -15,7 +15,7 @@ export class Track {
 }
 
 export interface ITrackRes {
-  code: number,
-  message?: string,
-  track?: Record<string, any>,
+  code: number;
+  message?: string;
+  track?: Record<string, any>;
 }

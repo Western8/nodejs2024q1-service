@@ -11,7 +11,7 @@ export class Artist {
 }
 
 export interface IArtistRes {
-  code: number,
-  message?: string,
-  artist?: Record<string, any>,
+  code: number;
+  message?: string;
+  artist?: Record<string, any>;
 }

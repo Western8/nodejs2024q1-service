@@ -1,7 +1,7 @@
 export interface IFavs {
-  artists: string[],
-  albums: string[],
-  tracks: string[],
+  artists: string[];
+  albums: string[];
+  tracks: string[];
 }
 
 export class Favs {
@@ -17,7 +17,7 @@ export class Favs {
 }
 
 export interface IFavsRes {
-  code: number,
-  message?: string,
-  favs?: Record<string, any>,
+  code: number;
+  message?: string;
+  favs?: Record<string, any>;
 }
