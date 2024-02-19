@@ -36,6 +36,9 @@ export class TrackService {
     if (!(createTrackDto.name && (typeof(createTrackDto.duration) === 'number'))) {
       return { code: 400 }
     }
+    if (!(isUUID(createTrackDto.artistId) && isUUID(createTrackDto.albumId))) {
+      return { code: 400 }
+    }
 
     const params = {
       id: crypto.randomUUID(), // uuid v4
@@ -69,6 +72,12 @@ export class TrackService {
       return {
         code: 400,
         message: 'Not valid fields',
+      }
+    }
+    if (!(isUUID(updateTrackDto.artistId) && isUUID(updateTrackDto.albumId))) {
+      return {
+        code: 400,
+        message: 'Not valid fields (id)',
       }
     }
     const track = db.tracks.find(item => item.id === id);

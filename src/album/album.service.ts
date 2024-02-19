@@ -36,6 +36,9 @@ export class AlbumService {
     if (!(createAlbumDto.name && (typeof(createAlbumDto.year) === 'number'))) {
       return { code: 400 }
     }
+    if (!isUUID(createAlbumDto.artistId)) {
+      return { code: 400 }
+    }
 
     const params = {
       id: crypto.randomUUID(), // uuid v4
@@ -70,6 +73,13 @@ export class AlbumService {
         message: 'Not valid fields',
       }
     }
+    if (!isUUID(updateAlbumDto.artistId)) {
+      return {
+        code: 400,
+        message: 'Not valid fields (artistId)',
+      }
+    }
+    
     const album = db.albums.find(item => item.id === id);
     if (!album) {
       return { code: 404 }

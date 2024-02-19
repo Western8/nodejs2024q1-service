@@ -39,8 +39,6 @@ export class FavsService {
   }
 
   delete(resource: string, id: string) {
-    console.log('db.favs ', db.favs);
-    
     const favsRes: IFavsRes = { code: 204 };
     if (!isUUID(id)) {
       return { code: 400 }
