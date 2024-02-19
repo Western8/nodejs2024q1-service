@@ -94,6 +94,10 @@ export class ArtistService {
     albums.forEach(item => item.artistId = null);
     const tracks = db.tracks.filter(item => item.artistId === id);
     tracks.forEach(item => item.artistId = null);
+    const indexFavs = db.favs.artists.findIndex(item => item === id);
+    if (indexFavs !== -1) {
+      db.favs.artists.splice(indexFavs, 1);
+    }
 
     return artistRes;
   }

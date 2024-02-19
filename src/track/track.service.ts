@@ -93,6 +93,12 @@ export class TrackService {
       return { code: 404 }
     }
     db.tracks.splice(index, 1);
+
+    const indexFavs = db.favs.tracks.findIndex(item => item === id);
+    if (indexFavs !== -1) {
+      db.favs.tracks.splice(indexFavs, 1);
+    }
+
     return trackRes;
   }
 }

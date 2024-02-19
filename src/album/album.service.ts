@@ -94,6 +94,10 @@ export class AlbumService {
 
     const tracks = db.tracks.filter(item => item.albumId === id);
     tracks.forEach(item => item.albumId = null);
+    const indexFavs = db.favs.albums.findIndex(item => item === id);
+    if (indexFavs !== -1) {
+      db.favs.albums.splice(indexFavs, 1);
+    }
 
     return albumRes;
   }
