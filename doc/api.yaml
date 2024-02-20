@@ -5,7 +5,7 @@ info:
   version: 1.0.0
 
 servers:
-  - url: /api
+  - url: /
 
 components:
   schemas:
@@ -189,7 +189,7 @@ paths:
           description: Bad request
         409:
           description: Conflict. Login already exists
-  /users:
+  /user:
     get:
       tags:
         - Users
@@ -239,7 +239,7 @@ paths:
           description: Bad request. body does not contain required fields
         401:
           $ref: '#/components/responses/UnauthorizedError'
-  /users/{userId}:
+  /user/{userId}:
     parameters:
       - name: userId
         in: path
@@ -334,10 +334,10 @@ paths:
           $ref: '#/components/responses/UnauthorizedError'
         404:
           description: User not found
-  /tracks:
+  /track:
     get:
       tags:
-        - Track
+        - Tracks
       summary: Get tracks list
       description: Gets all library tracks list
       responses:
@@ -353,7 +353,7 @@ paths:
           $ref: '#/components/responses/UnauthorizedError'
     post:
       tags:
-        - Track
+        - Tracks
       summary: Add new track
       description: Add new track information
       requestBody:
@@ -388,7 +388,7 @@ paths:
           description: Bad request. body does not contain required fields
         401:
           $ref: '#/components/responses/UnauthorizedError'
-  /tracks/{id}:
+  /track/{id}:
     parameters:
       - name: id
         in: path
@@ -398,7 +398,7 @@ paths:
           format: uuid
     get:
       tags:
-        - Track
+        - Tracks
       summary: Get single track by id
       description: Gets single track by id
       responses:
@@ -416,7 +416,7 @@ paths:
           description: Track was not found.
     put:
       tags:
-        - Track
+        - Tracks
       summary: Update track information
       description: Update library track information by UUID
       requestBody:
@@ -480,7 +480,7 @@ paths:
           description: Track was not found.
     delete:
       tags:
-        - Track
+        - Tracks
       summary: Delete track
       description: Delete track from library
       responses:
@@ -492,10 +492,10 @@ paths:
           $ref: '#/components/responses/UnauthorizedError'
         404:
           description: Track was not found.
-  /albums:
+  /album:
     get:
       tags:
-        - Album
+        - Albums
       summary: Get albums list
       description: Gets all library albums list
       responses:
@@ -511,7 +511,7 @@ paths:
           $ref: '#/components/responses/UnauthorizedError'
     post:
       tags:
-        - Album
+        - Albums
       summary: Add new album
       description: Add new album information
       requestBody:
@@ -544,7 +544,7 @@ paths:
           description: Bad request. body does not contain required fields
         401:
           $ref: '#/components/responses/UnauthorizedError'
-  /albums/{id}:
+  /album/{id}:
     parameters:
       - name: id
         in: path
@@ -554,7 +554,7 @@ paths:
           format: uuid
     get:
       tags:
-        - Album
+        - Albums
       summary: Get single album by id
       description: Gets single album by id
       responses:
@@ -572,7 +572,7 @@ paths:
           description: Album was not found.
     put:
       tags:
-        - Album
+        - Albums
       summary: Update album information
       description: Update library album information by UUID
       requestBody:
@@ -609,7 +609,7 @@ paths:
           description: Album was not found.
     delete:
       tags:
-        - Album
+        - Albums
       summary: Delete album
       description: Delete album from library
       responses:
@@ -621,10 +621,10 @@ paths:
           $ref: '#/components/responses/UnauthorizedError'
         404:
           description: Album was not found.
-  /artists:
+  /artist:
     get:
       tags:
-        - Artist
+        - Artists
       summary: Get all artists
       description: Gets all artists
       responses:
@@ -640,7 +640,7 @@ paths:
           $ref: '#/components/responses/UnauthorizedError'
     post:
       tags:
-        - Artist
+        - Artists
       summary: Add new artist
       description: Add new artist
       requestBody:
@@ -668,7 +668,7 @@ paths:
           description: Bad request. body does not contain required fields
         401:
           $ref: '#/components/responses/UnauthorizedError'
-  /artists/{id}:
+  /artist/{id}:
     parameters:
       - name: id
         in: path
@@ -678,7 +678,7 @@ paths:
           format: uuid
     get:
       tags:
-        - Artist
+        - Artists
       summary: Get single artist by id
       description: Get single artist by id
       responses:
@@ -696,7 +696,7 @@ paths:
           description: Artist was not found.
     put:
       tags:
-        - Artist
+        - Artists
       summary: Update artist information
       description: Update artist information by UUID
       requestBody:
@@ -728,7 +728,7 @@ paths:
           description: Artist was not found.
     delete:
       tags:
-        - Artist
+        - Artists
       summary: Delete artist
       description: Delete artist from library
       responses:
