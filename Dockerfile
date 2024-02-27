@@ -2,12 +2,14 @@ FROM node
 
 WORKDIR /app
 
-COPY package.json /app
+COPY package*.json ./
 
 RUN npm install
 
 COPY . .
 
-EXPOSE 4000
+RUN npm run build
 
-CMD [ "npm", "start" ]
+#EXPOSE 4000
+
+CMD [ "npm", "run", "start:dev" ]
