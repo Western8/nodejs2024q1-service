@@ -27,6 +27,7 @@ export class UserController {
 
   @Get(':id')
   getOne(@Param('id') id: string) {
+    //throw new Error('Craasssh!!!!!');
     const userRes: IUserRes = this.userService.getOne(id);
     if (userRes.code === 400) {
       throw new BadRequestException('Invalid user id');
