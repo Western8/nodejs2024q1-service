@@ -4,16 +4,14 @@ import { AppModule } from './app.module';
 import * as YAML from 'yamljs';
 import 'dotenv/config';
 
-console.log('process.env.PORT', process.env.PORT);
 const port: number =
   process.env.PORT && Number.isInteger(+process.env.PORT)
     ? +process.env.PORT
     : 4000;
-  console.log('port', port);    
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
-  /*
+  const app = await NestFactory.create(AppModule); 
+  /* 
     const config = new DocumentBuilder()
       .setTitle('Home library service API')
       .setDescription('API description for nest.js/service')
@@ -25,7 +23,6 @@ async function bootstrap() {
   const document = YAML.load('./doc/api.yaml');
   SwaggerModule.setup('doc', app, document);
 
-  console.log('listen port', port);
   await app.listen(port);
 }
 bootstrap();

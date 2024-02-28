@@ -3,6 +3,7 @@ version: '3.8'
 services:
   app:
     image: app
+    container_name: app_container
     build: 
       context: .
       dockerfile: Dockerfile
@@ -11,12 +12,15 @@ services:
     ports:
      - ${PORT}:${PORT}
     volumes:
-     - ./src:/app/src
+     - data:/var/lib/postgresql/data
+    networks:
+     - hlsnetwork    
     depends_on:
      - db
 
   db: 
     image: db
+    container_name: db_container
     build: 
       context: .
       dockerfile: Dockerfile_db
@@ -24,12 +28,14 @@ services:
       - ${PORT_POSTGRES}:${PORT_POSTGRES}
     restart: unless-stopped
     volumes:
+      - data:/var/lib/postgresql/data
      # - ~/apps/postgres:/var/lib/postgresql/data
-      - ./data:/app/data
     environment:
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    networks:
+     - hlsnetwork    
 
   pgadmin:
     image: dpage/pgadmin4
@@ -39,15 +45,19 @@ services:
       PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
       PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
     ports:
-    
-      - ${PORT_PGADMIN_DOCKER}:${PORT_PGADMIN_MAP}
+     - ${PORT_PGADMIN_DOCKER}:${PORT_PGADMIN_MAP}
+    networks:
+     - hlsnetwork    
     depends_on:
      - db
-    #volumes:
-    # - pgadmin-data:/data/pgadmin
+    volumes:
+     - data:/var/lib/postgresql/data
      # - pgadmin-data:/app/data/pgadmin
+
+networks:
+  hlsnetwork:
     
-#volumes:
- # db-data:
+volumes:
+  data:
   #pgadmin-data:
   
