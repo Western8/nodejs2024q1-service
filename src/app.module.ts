@@ -9,7 +9,14 @@ import { FavsModule } from './favs/favs.module';
 import { PrismaModule } from './prisma/prisma.module';
 
 @Module({
-  imports: [UserModule, ArtistModule, AlbumModule, TrackModule, FavsModule, PrismaModule],
+  imports: [
+    UserModule,
+    ArtistModule,
+    AlbumModule,
+    TrackModule,
+    FavsModule,
+    PrismaModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })

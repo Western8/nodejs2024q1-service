@@ -45,8 +45,14 @@ export class AlbumController {
   }
 
   @Put(':id')
-  async update(@Param('id') id: string, @Body() updateAlbumDto: UpdateAlbumDto) {
-    const albumRes: IAlbumRes = await this.albumService.update(id, updateAlbumDto);
+  async update(
+    @Param('id') id: string,
+    @Body() updateAlbumDto: UpdateAlbumDto,
+  ) {
+    const albumRes: IAlbumRes = await this.albumService.update(
+      id,
+      updateAlbumDto,
+    );
     if (albumRes.code === 400) {
       throw new BadRequestException(albumRes.message);
     } else if (albumRes.code === 404) {

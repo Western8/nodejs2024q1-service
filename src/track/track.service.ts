@@ -9,7 +9,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class TrackService {
-  constructor(private prisma: PrismaService) { }
+  constructor(private prisma: PrismaService) {}
 
   async getAll() {
     const tracksDb = await this.prisma.track.findMany();
@@ -142,12 +142,12 @@ export class TrackService {
     //db.tracks.splice(index, 1);
 
     await this.prisma.favs.deleteMany({
-      where: { 
+      where: {
         type: 'track',
-        dataId: id
-      }
+        dataId: id,
+      },
     });
-/*
+    /*
     const indexFavs = db.favs.tracks.findIndex((item) => item === id);
     if (indexFavs !== -1) {
       db.favs.tracks.splice(indexFavs, 1);

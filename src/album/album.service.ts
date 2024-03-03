@@ -9,8 +9,8 @@ import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class AlbumService {
-  constructor(private prisma: PrismaService) { }
-  
+  constructor(private prisma: PrismaService) {}
+
   async getAll() {
     const albumsDb = await this.prisma.album.findMany();
     const albums = albumsDb.map((item) => instanceToPlain(new Album(item)));
@@ -142,12 +142,12 @@ export class AlbumService {
     });
 
     await this.prisma.favs.deleteMany({
-      where: { 
+      where: {
         type: 'album',
-        dataId: id
-      }
+        dataId: id,
+      },
     });
-/*
+    /*
     const tracks = db.tracks.filter((item) => item.albumId === id);
     tracks.forEach((item) => (item.albumId = null));
     const indexFavs = db.favs.albums.findIndex((item) => item === id);

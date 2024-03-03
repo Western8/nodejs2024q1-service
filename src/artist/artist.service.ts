@@ -9,7 +9,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class ArtistService {
-  constructor(private prisma: PrismaService) { }
+  constructor(private prisma: PrismaService) {}
 
   async getAll() {
     const artistsDb = await this.prisma.artist.findMany();
@@ -121,12 +121,12 @@ export class ArtistService {
       data: { artistId: null },
     });
     await this.prisma.favs.deleteMany({
-      where: { 
+      where: {
         type: 'artist',
-        dataId: id
-      }
+        dataId: id,
+      },
     });
-/*
+    /*
     const albums = await this.prisma.album.findMany({ where: { artistId: id } });
     const albums = db.albums.filter((item) => item.artistId === id);
     albums.forEach((item) => (item.artistId = null));

@@ -37,7 +37,9 @@ export class ArtistController {
 
   @Post()
   async create(@Body() createArtistDto: CreateArtistDto) {
-    const artistRes: IArtistRes = await this.artistService.create(createArtistDto);
+    const artistRes: IArtistRes = await this.artistService.create(
+      createArtistDto,
+    );
     if (artistRes.code === 400) {
       throw new BadRequestException('Not valid artist fields');
     }
@@ -45,7 +47,10 @@ export class ArtistController {
   }
 
   @Put(':id')
-  async update(@Param('id') id: string, @Body() updateArtistDto: UpdateArtistDto) {
+  async update(
+    @Param('id') id: string,
+    @Body() updateArtistDto: UpdateArtistDto,
+  ) {
     const artistRes: IArtistRes = await this.artistService.update(
       id,
       updateArtistDto,

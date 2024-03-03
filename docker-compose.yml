@@ -9,8 +9,9 @@ services:
       dockerfile: Dockerfile
     #env_file:
      # - ./.env
-    environment:
-      - DATABASE_URL=postgresql://admin:admin@db:5432/db?schema=public
+    #environment:
+    #  - DATABASE_URL=postgresql://admin:admin@db:5432/db?schema=public
+
     #  - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@localhost:${PORT_POSTGRES}/db?schema=public
     # - PORT=${PORT}
     ports:
@@ -57,12 +58,10 @@ services:
      - db
     volumes:
      - data:/var/lib/postgresql/data
-     # - pgadmin-data:/app/data/pgadmin
 
 networks:
   hlsnetwork:
     
 volumes:
   data:
-  #pgadmin-data:
   

@@ -6,15 +6,36 @@ import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class FavsService {
-  constructor(private prisma: PrismaService) { }
+  constructor(private prisma: PrismaService) {}
 
   async getAll() {
-    const artistsDb = await this.prisma.favs.findMany({ where: { type: 'artist' } });
-    const artists = await Promise.all(artistsDb.map(async (item) => await this.prisma.artist.findUnique({ where: { id: item.dataId } }) )); 
-    const albumsDb = await this.prisma.favs.findMany({ where: { type: 'album' } });
-    const albums = await Promise.all(albumsDb.map(async (item) => await this.prisma.album.findUnique({ where: { id: item.dataId } }) ));
-    const tracksDb = await this.prisma.favs.findMany({ where: { type: 'track' } });
-    const tracks = await Promise.all(tracksDb.map(async (item) => await this.prisma.track.findUnique({ where: { id: item.dataId } }) ));
+    const artistsDb = await this.prisma.favs.findMany({
+      where: { type: 'artist' },
+    });
+    const artists = await Promise.all(
+      artistsDb.map(
+        async (item) =>
+          await this.prisma.artist.findUnique({ where: { id: item.dataId } }),
+      ),
+    );
+    const albumsDb = await this.prisma.favs.findMany({
+      where: { type: 'album' },
+    });
+    const albums = await Promise.all(
+      albumsDb.map(
+        async (item) =>
+          await this.prisma.album.findUnique({ where: { id: item.dataId } }),
+      ),
+    );
+    const tracksDb = await this.prisma.favs.findMany({
+      where: { type: 'track' },
+    });
+    const tracks = await Promise.all(
+      tracksDb.map(
+        async (item) =>
+          await this.prisma.track.findUnique({ where: { id: item.dataId } }),
+      ),
+    );
     /*
     const artists = db.favs.artists.map((item) =>
       db.artists.find((itemArtists) => itemArtists.id === item),
@@ -58,16 +79,18 @@ export class FavsService {
         message: `${resource} with id ${id} not found`,
       };
     }
-    const favsFind = await this.prisma.favs.findFirst({ where: { dataId: id } });
+    const favsFind = await this.prisma.favs.findFirst({
+      where: { dataId: id },
+    });
     if (favsFind === null) {
       const params = {
         id: crypto.randomUUID(), // uuid v4
         type: resource,
         dataId: id,
-      }
-      const album = await this.prisma.favs.create({ data: params });
-    //if (!db.favs[resource].includes(id)) {
-    //   db.favs[resource].push(id);
+      };
+      await this.prisma.favs.create({ data: params });
+      //if (!db.favs[resource].includes(id)) {
+      //   db.favs[resource].push(id);
     }
     return favsRes;
   }
@@ -78,11 +101,11 @@ export class FavsService {
       return { code: 400 };
     }
 
-    const favsFind = await this.prisma.favs.findFirst({ 
-      where: { 
+    const favsFind = await this.prisma.favs.findFirst({
+      where: {
         type: resource,
-        dataId: id
-      }
+        dataId: id,
+      },
     });
     //const index = db.favs[resource].findIndex((item) => item === id);
     //if (index === -1) {
@@ -90,10 +113,10 @@ export class FavsService {
       return { code: 404 };
     }
     await this.prisma.favs.deleteMany({
-      where: { 
+      where: {
         type: resource,
-        dataId: id
-      }
+        dataId: id,
+      },
     });
     //db.favs[resource].splice(index, 1);
 

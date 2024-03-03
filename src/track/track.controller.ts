@@ -45,8 +45,14 @@ export class TrackController {
   }
 
   @Put(':id')
-  async update(@Param('id') id: string, @Body() updateTrackDto: UpdateTrackDto) {
-    const trackRes: ITrackRes = await this.trackService.update(id, updateTrackDto);
+  async update(
+    @Param('id') id: string,
+    @Body() updateTrackDto: UpdateTrackDto,
+  ) {
+    const trackRes: ITrackRes = await this.trackService.update(
+      id,
+      updateTrackDto,
+    );
     if (trackRes.code === 400) {
       throw new BadRequestException(trackRes.message);
     } else if (trackRes.code === 404) {
