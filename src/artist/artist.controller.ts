@@ -20,13 +20,13 @@ export class ArtistController {
   constructor(private readonly artistService: ArtistService) {}
 
   @Get()
-  getAll() {
-    return this.artistService.getAll();
+  async getAll() {
+    return await this.artistService.getAll();
   }
 
   @Get(':id')
-  getOne(@Param('id') id: string) {
-    const artistRes: IArtistRes = this.artistService.getOne(id);
+  async getOne(@Param('id') id: string) {
+    const artistRes: IArtistRes = await this.artistService.getOne(id);
     if (artistRes.code === 400) {
       throw new BadRequestException('Not valid user id');
     } else if (artistRes.code === 404) {
@@ -36,8 +36,8 @@ export class ArtistController {
   }
 
   @Post()
-  create(@Body() createArtistDto: CreateArtistDto) {
-    const artistRes: IArtistRes = this.artistService.create(createArtistDto);
+  async create(@Body() createArtistDto: CreateArtistDto) {
+    const artistRes: IArtistRes = await this.artistService.create(createArtistDto);
     if (artistRes.code === 400) {
       throw new BadRequestException('Not valid artist fields');
     }
@@ -45,8 +45,8 @@ export class ArtistController {
   }
 
   @Put(':id')
-  update(@Param('id') id: string, @Body() updateArtistDto: UpdateArtistDto) {
-    const artistRes: IArtistRes = this.artistService.update(
+  async update(@Param('id') id: string, @Body() updateArtistDto: UpdateArtistDto) {
+    const artistRes: IArtistRes = await this.artistService.update(
       id,
       updateArtistDto,
     );
@@ -60,8 +60,8 @@ export class ArtistController {
 
   @Delete(':id')
   @HttpCode(204)
-  delete(@Param('id') id: string) {
-    const artistRes: IArtistRes = this.artistService.delete(id);
+  async delete(@Param('id') id: string) {
+    const artistRes: IArtistRes = await this.artistService.delete(id);
     if (artistRes.code === 400) {
       throw new BadRequestException('Not valid artist id');
     } else if (artistRes.code === 404) {

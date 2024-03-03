@@ -20,13 +20,13 @@ export class TrackController {
   constructor(private readonly trackService: TrackService) {}
 
   @Get()
-  getAll() {
-    return this.trackService.getAll();
+  async getAll() {
+    return await this.trackService.getAll();
   }
 
   @Get(':id')
-  getOne(@Param('id') id: string) {
-    const trackRes: ITrackRes = this.trackService.getOne(id);
+  async getOne(@Param('id') id: string) {
+    const trackRes: ITrackRes = await this.trackService.getOne(id);
     if (trackRes.code === 400) {
       throw new BadRequestException('Not valid user id');
     } else if (trackRes.code === 404) {
@@ -36,8 +36,8 @@ export class TrackController {
   }
 
   @Post()
-  create(@Body() createTrackDto: CreateTrackDto) {
-    const trackRes: ITrackRes = this.trackService.create(createTrackDto);
+  async create(@Body() createTrackDto: CreateTrackDto) {
+    const trackRes: ITrackRes = await this.trackService.create(createTrackDto);
     if (trackRes.code === 400) {
       throw new BadRequestException('Not valid track fields');
     }
@@ -45,8 +45,8 @@ export class TrackController {
   }
 
   @Put(':id')
-  update(@Param('id') id: string, @Body() updateTrackDto: UpdateTrackDto) {
-    const trackRes: ITrackRes = this.trackService.update(id, updateTrackDto);
+  async update(@Param('id') id: string, @Body() updateTrackDto: UpdateTrackDto) {
+    const trackRes: ITrackRes = await this.trackService.update(id, updateTrackDto);
     if (trackRes.code === 400) {
       throw new BadRequestException(trackRes.message);
     } else if (trackRes.code === 404) {
@@ -57,8 +57,8 @@ export class TrackController {
 
   @Delete(':id')
   @HttpCode(204)
-  delete(@Param('id') id: string) {
-    const trackRes: ITrackRes = this.trackService.delete(id);
+  async delete(@Param('id') id: string) {
+    const trackRes: ITrackRes = await this.trackService.delete(id);
     if (trackRes.code === 400) {
       throw new BadRequestException('Not valid track id');
     } else if (trackRes.code === 404) {

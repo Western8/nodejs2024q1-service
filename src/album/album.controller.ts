@@ -20,13 +20,13 @@ export class AlbumController {
   constructor(private readonly albumService: AlbumService) {}
 
   @Get()
-  getAll() {
-    return this.albumService.getAll();
+  async getAll() {
+    return await this.albumService.getAll();
   }
 
   @Get(':id')
-  getOne(@Param('id') id: string) {
-    const albumRes: IAlbumRes = this.albumService.getOne(id);
+  async getOne(@Param('id') id: string) {
+    const albumRes: IAlbumRes = await this.albumService.getOne(id);
     if (albumRes.code === 400) {
       throw new BadRequestException('Not valid user id');
     } else if (albumRes.code === 404) {
@@ -36,8 +36,8 @@ export class AlbumController {
   }
 
   @Post()
-  create(@Body() createAlbumDto: CreateAlbumDto) {
-    const albumRes: IAlbumRes = this.albumService.create(createAlbumDto);
+  async create(@Body() createAlbumDto: CreateAlbumDto) {
+    const albumRes: IAlbumRes = await this.albumService.create(createAlbumDto);
     if (albumRes.code === 400) {
       throw new BadRequestException('Not valid album fields');
     }
@@ -45,8 +45,8 @@ export class AlbumController {
   }
 
   @Put(':id')
-  update(@Param('id') id: string, @Body() updateAlbumDto: UpdateAlbumDto) {
-    const albumRes: IAlbumRes = this.albumService.update(id, updateAlbumDto);
+  async update(@Param('id') id: string, @Body() updateAlbumDto: UpdateAlbumDto) {
+    const albumRes: IAlbumRes = await this.albumService.update(id, updateAlbumDto);
     if (albumRes.code === 400) {
       throw new BadRequestException(albumRes.message);
     } else if (albumRes.code === 404) {
@@ -57,8 +57,8 @@ export class AlbumController {
 
   @Delete(':id')
   @HttpCode(204)
-  delete(@Param('id') id: string) {
-    const albumRes: IAlbumRes = this.albumService.delete(id);
+  async delete(@Param('id') id: string) {
+    const albumRes: IAlbumRes = await this.albumService.delete(id);
     if (albumRes.code === 400) {
       throw new BadRequestException('Not valid album id');
     } else if (albumRes.code === 404) {

@@ -18,8 +18,8 @@ model User {
   login     String
   password  String
   version   Int
-  createdAt Int
-  updatedAt Int
+  createdAt BigInt
+  updatedAt BigInt
 }
 
 model Artist {
@@ -28,36 +28,49 @@ model Artist {
   grammy   Boolean
   albums   Album[]
   tracks   Track[]
-  favs     Favs[]
+  //favs     Favs[]
 }
 
 model Album {
   id       String @id
   name     String
   year     Int
-  artist   Artist @relation(fields: [artistId], references: [id])
-  artistId String
+  artist   Artist? @relation(fields: [artistId], references: [id])
+  artistId String?
   tracks   Track[]
-  favs     Favs[]
+  //favs     Favs[]
 }
 
 model Track {
   id       String @id
   name     String
-  artist   Artist @relation(fields: [artistId], references: [id])
-  artistId String
-  album    Album @relation(fields: [albumId], references: [id])
-  albumId  String
+  artist   Artist? @relation(fields: [artistId], references: [id])
+  artistId String?
+  album    Album? @relation(fields: [albumId], references: [id])
+  albumId  String?
   duration Float
-  favs     Favs[]
+  //favs     Favs[]
 }
 
 model Favs {
   id       String @id
-  artists  Artist[]
-  artistId String
-  albums   Album[]
-  albumId  String
-  tracks   Track[]
-  trackId  String
+  type     String
+  dataId   String
 }
+
+
+//enum FavsType {
+//  ARTIST
+//  ALBUM
+//  TRACK
+//}
+
+//model Favs {
+  //id       String @id
+  //artists  Artist[]
+  //artistId String
+  //albums   Album[]
+  //albumId  String
+  //tracks   Track[]
+  //trackId  String
+//}

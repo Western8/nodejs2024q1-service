@@ -25,7 +25,7 @@ export const db = {
 };
 
 export const favsDb = {
-  artist: 'artists',
-  album: 'albums',
-  track: 'tracks',
+  artist: 'artist',
+  album: 'album',
+  track: 'track',
 };

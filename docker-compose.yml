@@ -7,7 +7,11 @@ services:
     build: 
       context: .
       dockerfile: Dockerfile
-    #environment:
+    #env_file:
+     # - ./.env
+    environment:
+      - DATABASE_URL=postgresql://admin:admin@db:5432/db?schema=public
+    #  - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@localhost:${PORT_POSTGRES}/db?schema=public
     # - PORT=${PORT}
     ports:
      - ${PORT}:${PORT}
@@ -34,6 +38,7 @@ services:
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      # DATABASE_URL: postgresql://admin:admin@localhost:5432/db?schema=public
     networks:
      - hlsnetwork    
 

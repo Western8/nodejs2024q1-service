@@ -3,6 +3,7 @@ import { SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import * as YAML from 'yamljs';
 import 'dotenv/config';
+import './utils/polyfill';
 
 const port: number =
   process.env.PORT && Number.isInteger(+process.env.PORT)
