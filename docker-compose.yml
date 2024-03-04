@@ -13,7 +13,7 @@ services:
      - ${PORT}:${PORT}
     volumes:
      - data:/var/lib/postgresql/data
-    # - ./src:/app/src/
+     - ./src:/app/src/
     networks:
      - hlsnetwork    
     depends_on:

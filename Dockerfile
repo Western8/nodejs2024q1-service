@@ -1,12 +1,15 @@
-FROM node:20-alpine
-#FROM node:20
+FROM node:20 as build
 
 WORKDIR /app
 
 COPY package*.json ./
-COPY prisma ./prisma/
+#COPY prisma ./prisma/
 
 RUN npm install
+
+
+FROM node:20-alpine
+COPY --from=build /app /
 
 COPY . .
 
