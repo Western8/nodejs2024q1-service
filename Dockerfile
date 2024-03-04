@@ -1,4 +1,5 @@
 FROM node:20-alpine
+#FROM node:20
 
 WORKDIR /app
 
@@ -10,8 +11,6 @@ RUN npm install
 COPY . .
 
 RUN npm run build
-#RUN npx prisma generate
-#RUN npx prisma migrate dev
 
 #EXPOSE 4000
 
