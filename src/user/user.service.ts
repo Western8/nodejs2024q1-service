@@ -12,7 +12,6 @@ export class UserService {
   constructor(private prisma: PrismaService) {}
 
   async getAll() {
-    //console.log('test');
     const usersDb = await this.prisma.user.findMany();
     const users = usersDb.map((item) => instanceToPlain(new User(item)));
     //const users = db.users.map((item) => instanceToPlain(item));
