@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   app:
-    image: WESTERN8/app
+    image: western8/app
     container_name: app_container
     build: 
       context: .
