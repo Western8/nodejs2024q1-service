@@ -18,17 +18,17 @@ export class FavsController {
   constructor(private readonly favsService: FavsService) {}
 
   @Get()
-  getAll() {
-    return this.favsService.getAll();
+  async getAll() {
+    return await this.favsService.getAll();
   }
 
   @Post(':resource/:id')
-  add(@Param('resource') resource: string, @Param('id') id: string) {
+  async add(@Param('resource') resource: string, @Param('id') id: string) {
     const resourceDb = favsDb[resource];
     if (!resourceDb) {
       throw new NotFoundException(`Path not found`);
     }
-    const favsRes: IFavsRes = this.favsService.add(resourceDb, id);
+    const favsRes: IFavsRes = await this.favsService.add(resourceDb, id);
     if (favsRes.code === 400) {
       throw new BadRequestException('Not valid fields');
     } else if (favsRes.code === 422) {
@@ -39,12 +39,12 @@ export class FavsController {
 
   @Delete(':resource/:id')
   @HttpCode(204)
-  delete(@Param('resource') resource: string, @Param('id') id: string) {
+  async delete(@Param('resource') resource: string, @Param('id') id: string) {
     const resourceDb = favsDb[resource];
     if (!resourceDb) {
       throw new NotFoundException(`Path not found`);
     }
-    const favsRes: IFavsRes = this.favsService.delete(resourceDb, id);
+    const favsRes: IFavsRes = await this.favsService.delete(resourceDb, id);
     if (favsRes.code === 400) {
       throw new BadRequestException('Not valid favs id');
     } else if (favsRes.code === 404) {

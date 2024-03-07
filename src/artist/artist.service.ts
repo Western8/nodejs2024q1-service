@@ -4,30 +4,36 @@ import { UpdateArtistDto } from './dto/update-artist.dto';
 import { IArtistRes, Artist } from './entities/artist.entity';
 import { isUUID } from 'src/utils/utils';
 import { instanceToPlain } from 'class-transformer';
-import { db } from 'src/utils/db';
+import { PrismaService } from 'src/prisma/prisma.service';
+// import { db } from 'src/utils/db';
 
 @Injectable()
 export class ArtistService {
-  //artists: Artist[] = [];
-  getAll() {
-    const artists = db.artists.map((item) => instanceToPlain(item));
+  constructor(private prisma: PrismaService) {}
+
+  async getAll() {
+    const artistsDb = await this.prisma.artist.findMany();
+    const artists = artistsDb.map((item) => instanceToPlain(new Artist(item)));
+    //const artists = db.artists.map((item) => instanceToPlain(item));
+    console.log('11111111 getall artists', artists);
     return artists;
   }
 
-  getOne(id: string): IArtistRes {
+  async getOne(id: string): Promise<IArtistRes> {
     const artistRes: IArtistRes = { code: 200 };
     if (!isUUID(id)) {
       return { code: 400 };
     }
-    const artist = db.artists.find((item) => item.id === id);
-    if (!artist) {
+    const artist = await this.prisma.artist.findUnique({ where: { id: id } });
+    //const artist = db.artists.find((item) => item.id === id);
+    if (artist === null) {
       return { code: 404 };
     }
-    artistRes.artist = instanceToPlain(artist);
+    artistRes.artist = instanceToPlain(new Artist(artist));
     return artistRes;
   }
 
-  create(createArtistDto: CreateArtistDto): IArtistRes {
+  async create(createArtistDto: CreateArtistDto): Promise<IArtistRes> {
     const artistRes: IArtistRes = { code: 200 };
     const keys: string[] = Object.keys(createArtistDto);
     if (!(keys.includes('name') && keys.includes('grammy'))) {
@@ -44,13 +50,13 @@ export class ArtistService {
       name: createArtistDto.name,
       grammy: createArtistDto.grammy,
     };
-    const artist: Artist = new Artist(params);
-    db.artists.push(artist);
-    artistRes.artist = instanceToPlain(artist);
+    const artist = await this.prisma.artist.create({ data: params });
+    //db.artists.push(artist);
+    artistRes.artist = instanceToPlain(new Artist(artist));
     return artistRes;
   }
 
-  update(id: string, updateArtistDto: UpdateArtistDto) {
+  async update(id: string, updateArtistDto: UpdateArtistDto) {
     const artistRes: IArtistRes = { code: 200 };
     if (!isUUID(id)) {
       return {
@@ -73,27 +79,55 @@ export class ArtistService {
         message: 'Not valid fields',
       };
     }
-    const artist = db.artists.find((item) => item.id === id);
-    if (!artist) {
+    const artist = await this.prisma.artist.findUnique({ where: { id: id } });
+    //const artist = db.artists.find((item) => item.id === id);
+    //if (!artist) {
+    if (artist === null) {
       return { code: 404 };
     }
-    artist.name = updateArtistDto.name;
-    artist.grammy = updateArtistDto.grammy;
-    artistRes.artist = instanceToPlain(artist);
+    const artistDb = await this.prisma.artist.update({
+      where: { id: id },
+      data: {
+        name: updateArtistDto.name,
+        grammy: updateArtistDto.grammy,
+      },
+    });
+    // artist.name = updateArtistDto.name;
+    // artist.grammy = updateArtistDto.grammy;
+    artistRes.artist = instanceToPlain(new Artist(artistDb));
     return artistRes;
   }
 
-  delete(id: string) {
+  async delete(id: string) {
     const artistRes: IArtistRes = { code: 204 };
     if (!isUUID(id)) {
       return { code: 400 };
     }
-    const index = db.artists.findIndex((item) => item.id === id);
-    if (index === -1) {
+    const artist = await this.prisma.artist.findUnique({ where: { id: id } });
+    // const index = db.artists.findIndex((item) => item.id === id);
+    // if (index === -1) {
+    if (artist === null) {
       return { code: 404 };
     }
-    db.artists.splice(index, 1);
+    await this.prisma.artist.delete({ where: { id: id } });
+    // db.artists.splice(index, 1);
 
+    await this.prisma.album.updateMany({
+      where: { artistId: id },
+      data: { artistId: null },
+    });
+    await this.prisma.track.updateMany({
+      where: { artistId: id },
+      data: { artistId: null },
+    });
+    await this.prisma.favs.deleteMany({
+      where: {
+        type: 'artist',
+        dataId: id,
+      },
+    });
+    /*
+    const albums = await this.prisma.album.findMany({ where: { artistId: id } });
     const albums = db.albums.filter((item) => item.artistId === id);
     albums.forEach((item) => (item.artistId = null));
     const tracks = db.tracks.filter((item) => item.artistId === id);
@@ -102,7 +136,7 @@ export class ArtistService {
     if (indexFavs !== -1) {
       db.favs.artists.splice(indexFavs, 1);
     }
-
+*/
     return artistRes;
   }
 }

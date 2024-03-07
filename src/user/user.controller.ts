@@ -21,13 +21,15 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Get()
-  getAll() {
-    return this.userService.getAll();
+  async getAll() {
+    return await this.userService.getAll();
   }
 
   @Get(':id')
-  getOne(@Param('id') id: string) {
-    const userRes: IUserRes = this.userService.getOne(id);
+  async getOne(@Param('id') id: string) {
+    //throw new Error('Craasssh!!!!!');
+    //const userRes: IUserRes = this.userService.getOne(id);
+    const userRes = await this.userService.getOne(id);
     if (userRes.code === 400) {
       throw new BadRequestException('Invalid user id');
     } else if (userRes.code === 404) {
@@ -37,8 +39,9 @@ export class UserController {
   }
 
   @Post()
-  create(@Body() createUserDto: CreateUserDto) {
-    const userRes: IUserRes = this.userService.create(createUserDto);
+  async create(@Body() createUserDto: CreateUserDto) {
+    //const userRes: Promise<IUserRes> = await this.userService.create(createUserDto);
+    const userRes = await this.userService.create(createUserDto);
     if (userRes.code === 400) {
       throw new BadRequestException('Incorrect users fields');
     }
@@ -46,8 +49,9 @@ export class UserController {
   }
 
   @Put(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    const userRes: IUserRes = this.userService.update(id, updateUserDto);
+  async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+    const userRes = await this.userService.update(id, updateUserDto);
+    //const userRes: IUserRes = this.userService.update(id, updateUserDto);
     if (userRes.code === 400) {
       throw new BadRequestException(userRes.message);
     } else if (userRes.code === 404) {
@@ -60,8 +64,9 @@ export class UserController {
 
   @Delete(':id')
   @HttpCode(204)
-  delete(@Param('id') id: string) {
-    const userRes: IUserRes = this.userService.delete(id);
+  async delete(@Param('id') id: string) {
+    const userRes: IUserRes = await this.userService.delete(id);
+    // const userRes: IUserRes = this.userService.delete(id);
     if (userRes.code === 400) {
       throw new BadRequestException('Invalid user id');
     } else if (userRes.code === 404) {

@@ -4,6 +4,7 @@
 
 - Git - [Download & Install Git](https://git-scm.com/downloads).
 - Node.js - [Download & Install Node.js](https://nodejs.org/en/download/) and the npm package manager.
+- Docker - [Download & Install Docker](https://www.docker.com/) and run it.
 
 ## Downloading
 
@@ -11,21 +12,28 @@
 git clone {repository URL}
 ```
 
-## Installing NPM modules
+## Installing
 
+- Switch to the branch `task2`
+- Rename file `.env.example` to `.env` and edit it if you want
+- Install npm modules
 ```
 npm install
 ```
 
 ## Running application
 
+Build Docker images and run them
+
 ```
-npm start
+npm run docker:compose
 ```
 
 After starting the app on port (4000 as default) you can open
 in your browser OpenAPI documentation by typing http://localhost:4000/doc/.
 For more information about OpenAPI/Swagger please visit https://swagger.io/.
+
+Next time you can run app with command `docker-compose up`
 
 ## Testing
 
@@ -63,6 +71,16 @@ npm run lint
 
 ```
 npm run format
+```
+
+### Scan for vulnerabilities
+
+```
+npm run docker:scan:app
+```
+
+```
+npm run docker:scan:db
 ```
 
 ### Debugging in VSCode

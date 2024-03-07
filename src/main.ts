@@ -3,6 +3,7 @@ import { SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import * as YAML from 'yamljs';
 import 'dotenv/config';
+import './utils/polyfill';
 
 const port: number =
   process.env.PORT && Number.isInteger(+process.env.PORT)
@@ -11,7 +12,7 @@ const port: number =
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  /*
+  /* 
     const config = new DocumentBuilder()
       .setTitle('Home library service API')
       .setDescription('API description for nest.js/service')

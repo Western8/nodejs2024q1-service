@@ -1,0 +1,61 @@
+version: '3.8'
+
+services:
+  app:
+    image: western8/app
+    container_name: app_container
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    env_file:
+      - ./.env
+    ports:
+     - ${PORT}:${PORT}
+    volumes:
+     - data:/var/lib/postgresql/data
+     - ./src:/app/src/
+    networks:
+     - hlsnetwork    
+    depends_on:
+     - db
+
+  db: 
+    image: db
+    container_name: db_container
+    build: 
+      context: .
+      dockerfile: Dockerfile_db
+    ports: 
+      - ${PORT_POSTGRES}:${PORT_POSTGRES}
+    restart: unless-stopped
+    volumes:
+      - data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    networks:
+     - hlsnetwork    
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin4_container
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
+    ports:
+     - ${PORT_PGADMIN_DOCKER}:${PORT_PGADMIN_MAP}
+    networks:
+     - hlsnetwork    
+    depends_on:
+     - db
+    volumes:
+     - data:/var/lib/postgresql/data
+
+networks:
+  hlsnetwork:
+    
+volumes:
+  data:
+  
