@@ -1,17 +1,22 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { IUserRes, User } from './entities/user.entity';
 import { isUUID } from 'src/utils/utils';
 import { instanceToPlain } from 'class-transformer';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { CustomLogger } from 'src/logger/logger.service';
 // import { db } from 'src/utils/db';
 
 @Injectable()
 export class UserService {
   constructor(private prisma: PrismaService) {}
+  //private readonly logger = new CustomLogger(UserService.name);
+  private readonly logger = new CustomLogger();
 
   async getAll() {
+    console.log('start logger...');
+    this.logger.log('custom log: call all the users!!!!!!!!!!!!!!!!');
     const usersDb = await this.prisma.user.findMany();
     const users = usersDb.map((item) => instanceToPlain(new User(item)));
     //const users = db.users.map((item) => instanceToPlain(item));
