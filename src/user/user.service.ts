@@ -14,8 +14,6 @@ export class UserService {
   private readonly logger = new CustomLogger();
 
   async getAll() {
-    console.log('start logger...');
-    this.logger.log('custom log: call all the users!!!!!!!!!!!!!!!!');
     const usersDb = await this.prisma.user.findMany();
     const users = usersDb.map((item) => instanceToPlain(new User(item)));
     return users;

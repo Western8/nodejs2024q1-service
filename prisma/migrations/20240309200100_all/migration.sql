@@ -1,4 +1,12 @@
 -- CreateTable
+CREATE TABLE "Auth" (
+    "login" TEXT NOT NULL,
+    "password" TEXT NOT NULL,
+
+    CONSTRAINT "Auth_pkey" PRIMARY KEY ("login")
+);
+
+-- CreateTable
 CREATE TABLE "User" (
     "id" TEXT NOT NULL,
     "login" TEXT NOT NULL,
