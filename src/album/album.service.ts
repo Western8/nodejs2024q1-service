@@ -120,7 +120,7 @@ export class AlbumService {
         dataId: id,
       },
     });
-    
+
     return albumRes;
   }
 }

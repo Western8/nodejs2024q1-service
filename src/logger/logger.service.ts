@@ -1,49 +1,79 @@
-import { Logger, LoggerService } from '@nestjs/common';
+import { Injectable, Logger, LoggerService } from '@nestjs/common';
+import {
+  appendFileSync,
+  existsSync,
+  mkdirSync,
+  renameSync,
+  statSync,
+} from 'node:fs';
 
+@Injectable()
 export class CustomLogger implements LoggerService {
+  level: number;
 
-  /**
-   * Write a 'log' level log.
-   */
+  constructor() {
+    this.level = logLevels.indexOf(process.env.LOG_LEVEL);
+    if (this.level === -1) this.level = 2;
+  }
+
   log(message: any, ...optionalParams: any[]) {
-    console.log(`(CUSTOM log) ${message}`);
+    this.logTo(3, message);
   }
 
-  /**
-   * Write a 'fatal' level log.
-   */
   fatal(message: any, ...optionalParams: any[]) {
-    console.error(message);
+    this.logTo(0, message);
+    //console.error(0, message);
   }
 
-  /**
-   * Write an 'error' level log.
-  */
   error(message: any, ...optionalParams: any[]) {
-    console.error(message);
+    this.logTo(1, message);
+    //console.error(message);
   }
 
-  /**
-   * Write a 'warn' level log.
-   */
   warn(message: any, ...optionalParams: any[]) {
-    console.warn(message);
+    this.logTo(2, message);
+    //console.warn(message);
   }
 
-  /**
-   * Write a 'debug' level log.
-   */
   debug?(message: any, ...optionalParams: any[]) {
-    console.error(message);
+    this.logTo(4, message);
   }
 
-  /**
-   * Write a 'verbose' level log.
-   */
   verbose?(message: any, ...optionalParams: any[]) {
-    console.error(message);
+    this.logTo(5, message);
   }
 
+  getFilename(level: number, rotate = false) {
+    const dir = './logs';
+    if (!existsSync(dir)) mkdirSync(dir);
+    let timestamp = new Date().toISOString().substring(0, 10);
+    if (rotate) {
+      timestamp = new Date().toISOString().replace(/:/g, '');
+    }
+    return `${dir}/hsl-log-${level < 2 ? 'errors' : 'logs'}-${timestamp}.log`;
+  }
+
+  logTo(level: number, message: string) {
+    if (level > this.level) return;
+    const messageNew = `[${logLevels[level].toLocaleUpperCase()}] ${message}`;
+    process.stdout.write(messageNew);
+    this.logToFile(level, messageNew);
+  }
+
+  logToFile(level: number, message: string) {
+    const filename = this.getFilename(level);
+    const timestamp = new Date().toISOString();
+    const logStr = `[${timestamp}] ${message}\n`;
+
+    if (existsSync(filename)) {
+      const fileSize = statSync(filename).size / 1024;
+      const maxFileSize = +process.env.LOG_FILE_SIZE || 0;
+      if (maxFileSize && fileSize > maxFileSize) {
+        renameSync(filename, this.getFilename(level, true));
+      }
+    }
+    appendFileSync(filename, logStr);
+  }
 
   /*
     error(message: any, stack?: string, context?: string) {
@@ -52,3 +82,5 @@ export class CustomLogger implements LoggerService {
     }
     */
 }
+
+export const logLevels = ['fatal', 'error', 'warn', 'log', 'verbose', 'debug'];

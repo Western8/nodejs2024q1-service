@@ -115,7 +115,7 @@ export class ArtistService {
         dataId: id,
       },
     });
-    
+
     return artistRes;
   }
 }

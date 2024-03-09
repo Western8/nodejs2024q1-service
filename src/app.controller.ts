@@ -9,4 +9,14 @@ export class AppController {
   getHello(): string {
     return this.appService.getHello();
   }
+
+  @Get('test/exception')
+  testException() {
+    throw new Error('Test uncaught exception');
+  }
+
+  @Get('test/rejection')
+  testRejection() {
+    throw new Error('Test unhandled rejection');
+  }
 }

@@ -5,7 +5,7 @@ import * as YAML from 'yamljs';
 import 'dotenv/config';
 import './utils/polyfill';
 import { CustomLogger } from './logger/logger.service';
-import { AllExceptionsFilter } from './exception/exception.filter';
+import { AllExceptionsFilter } from './logger/exception.filter';
 
 const port: number =
   process.env.PORT && Number.isInteger(+process.env.PORT)
@@ -14,23 +14,25 @@ const port: number =
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
-    // logger: new CustomLogger(),
+    //logger: new CustomLogger(),
     //bufferLogs: true,
   });
   //app.useLogger(app.get(CustomLogger));
   const httpAdapter = app.get(HttpAdapterHost);
   app.useGlobalFilters(new AllExceptionsFilter(httpAdapter));
-  /* 
-    const config = new DocumentBuilder()
-      .setTitle('Home library service API')
-      .setDescription('API description for nest.js/service')
-      .setVersion('1.0')
-      //.addTag('lib')
-      .build();
-    const document = SwaggerModule.createDocument(app, config);
-  */
+  const logger = new CustomLogger();
+
   const document = YAML.load('./doc/api.yaml');
   SwaggerModule.setup('doc', app, document);
+
+  process.on('uncaughtException', (error) => {
+    logger.fatal(`Uncaught exception! ${error}. App stopped.`);
+    process.exit(1);
+  });
+
+  process.on('unhandledRejection', (reason) => {
+    logger.warn(`unhandled rejection! ${reason}`);
+  });
 
   await app.listen(port);
 }
