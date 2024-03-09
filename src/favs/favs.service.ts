@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { IFavsRes } from './entities/favs.entity';
 import { isUUID } from 'src/utils/utils';
 import { PrismaService } from 'src/prisma/prisma.service';
-// import { db } from 'src/utils/db';
 
 @Injectable()
 export class FavsService {
@@ -36,17 +35,6 @@ export class FavsService {
           await this.prisma.track.findUnique({ where: { id: item.dataId } }),
       ),
     );
-    /*
-    const artists = db.favs.artists.map((item) =>
-      db.artists.find((itemArtists) => itemArtists.id === item),
-    );
-    const albums = db.favs.albums.map((item) =>
-      db.albums.find((itemAlbums) => itemAlbums.id === item),
-    );
-    const tracks = db.favs.tracks.map((item) =>
-      db.tracks.find((itemTracks) => itemTracks.id === item),
-    );
-    */
     const favs = {
       artists,
       albums,
@@ -71,8 +59,6 @@ export class FavsService {
     } else if (resource === 'track') {
       resourceFind = await this.prisma.track.findUnique({ where: { id: id } });
     }
-    // const resourceFind = db[resource].find((item) => item.id === id);
-    // if (!resourceFind) {
     if (resourceFind === null) {
       return {
         code: 422,
@@ -89,8 +75,6 @@ export class FavsService {
         dataId: id,
       };
       await this.prisma.favs.create({ data: params });
-      //if (!db.favs[resource].includes(id)) {
-      //   db.favs[resource].push(id);
     }
     return favsRes;
   }
@@ -107,8 +91,6 @@ export class FavsService {
         dataId: id,
       },
     });
-    //const index = db.favs[resource].findIndex((item) => item === id);
-    //if (index === -1) {
     if (favsFind === null) {
       return { code: 404 };
     }
@@ -118,7 +100,6 @@ export class FavsService {
         dataId: id,
       },
     });
-    //db.favs[resource].splice(index, 1);
 
     return favsRes;
   }

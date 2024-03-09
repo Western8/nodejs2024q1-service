@@ -6,7 +6,6 @@ import { isUUID } from 'src/utils/utils';
 import { instanceToPlain } from 'class-transformer';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CustomLogger } from 'src/logger/logger.service';
-// import { db } from 'src/utils/db';
 
 @Injectable()
 export class UserService {
@@ -19,7 +18,6 @@ export class UserService {
     this.logger.log('custom log: call all the users!!!!!!!!!!!!!!!!');
     const usersDb = await this.prisma.user.findMany();
     const users = usersDb.map((item) => instanceToPlain(new User(item)));
-    //const users = db.users.map((item) => instanceToPlain(item));
     return users;
   }
 
@@ -29,7 +27,6 @@ export class UserService {
       return { code: 400 };
     }
     const userDb = await this.prisma.user.findUnique({ where: { id: id } });
-    //const user = db.users.find((item) => item.id === id);
     if (userDb === null) {
       return { code: 404 };
     }
@@ -57,7 +54,6 @@ export class UserService {
       updatedAt: new Date().getTime(), // timestamp of last update
     };
     const userDb = await this.prisma.user.create({ data: params });
-    //db.users.push(user);
     userRes.user = instanceToPlain(new User(userDb));
     return userRes;
   }
@@ -77,8 +73,6 @@ export class UserService {
       };
     }
     const user = await this.prisma.user.findUnique({ where: { id: id } });
-    // const user = db.users.find((item) => item.id === id);
-    //if (!user) {
     if (user === null) {
       return { code: 404 };
     }
@@ -96,11 +90,6 @@ export class UserService {
         version: user.version + 1,
       },
     });
-    /*
-    user.password = updateUserDto.newPassword;
-    user.updatedAt = new Date().getTime();
-    user.version++;
-    */
     userRes.user = instanceToPlain(new User(userDb));
     return userRes;
   }
@@ -111,13 +100,10 @@ export class UserService {
       return { code: 400 };
     }
     const user = await this.prisma.user.findUnique({ where: { id: id } });
-    //const index = db.users.findIndex((item) => item.id === id);
-    //if (index === -1) {
     if (user === null) {
       return { code: 404 };
     }
     await this.prisma.user.delete({ where: { id: id } });
-    //db.users.splice(index, 1);
     return userRes;
   }
 }
