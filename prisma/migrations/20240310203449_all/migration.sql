@@ -1,12 +1,4 @@
 -- CreateTable
-CREATE TABLE "Auth" (
-    "login" TEXT NOT NULL,
-    "password" TEXT NOT NULL,
-
-    CONSTRAINT "Auth_pkey" PRIMARY KEY ("login")
-);
-
--- CreateTable
 CREATE TABLE "User" (
     "id" TEXT NOT NULL,
     "login" TEXT NOT NULL,
@@ -14,6 +6,7 @@ CREATE TABLE "User" (
     "version" INTEGER NOT NULL,
     "createdAt" BIGINT NOT NULL,
     "updatedAt" BIGINT NOT NULL,
+    "refreshToken" TEXT,
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("id")
 );

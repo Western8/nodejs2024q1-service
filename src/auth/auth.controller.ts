@@ -1,26 +1,18 @@
 import {
   Controller,
-  Get,
   Post,
   Body,
   BadRequestException,
-  NotFoundException,
   ForbiddenException,
   HttpCode,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { authDto } from './dto/auth.dto';
-import { IAuthRes } from './entities/auth.entity';
+import { authDto, refreshDto } from './dto/auth.dto';
 import { Public } from './auth.guard';
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
-
-  @Get()
-  async getAll() {
-    return await this.authService.getAll();
-  }
 
   @Public()
   @Post('signup')
@@ -32,7 +24,7 @@ export class AuthController {
     } else if (authRes.code === 403) {
       throw new ForbiddenException(`Login already exists`);
     }
-    return authRes.message;
+    return authRes.user;
   }
 
   @Public()
@@ -45,19 +37,20 @@ export class AuthController {
     } else if (authRes.code === 403) {
       throw new ForbiddenException(`Not correct login OR password!`);
     }
-    return authRes.accessToken;
+    return authRes;
   }
 
   @Post('refresh')
   @HttpCode(200)
-  async refresh(@Body() authDto: authDto) {
-    const authRes = await this.authService.refresh(authDto);
+  async refresh(@Body() refreshDto: refreshDto) {
+    const authRes = await this.authService.refresh(refreshDto);
     if (authRes.code === 401) {
-      throw new BadRequestException('Incorrect refresh token fields OR no refresh token');
+      throw new BadRequestException(
+        'Incorrect refresh token fields OR no refresh token',
+      );
     } else if (authRes.code === 403) {
       throw new ForbiddenException(`Refresh token is invalid or expired`);
     }
-    return authRes.tokens;
+    return authRes;
   }
-
 }

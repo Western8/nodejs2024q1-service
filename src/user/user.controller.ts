@@ -27,7 +27,6 @@ export class UserController {
 
   @Get(':id')
   async getOne(@Param('id') id: string) {
-    //throw new Error('Craasssh!!!!!');
     const userRes = await this.userService.getOne(id);
     if (userRes.code === 400) {
       throw new BadRequestException('Invalid user id');

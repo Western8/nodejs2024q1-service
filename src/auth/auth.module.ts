@@ -12,15 +12,15 @@ import { APP_GUARD } from '@nestjs/core';
     AuthService,
     {
       provide: APP_GUARD,
-      useClass: AuthGuard
-    }
+      useClass: AuthGuard,
+    },
   ],
   imports: [
     PrismaModule,
     JwtModule.register({
-//    global: true,
+      //    global: true,
       secret: process.env.JWT_SECRET_KEY || 'secret',
-      signOptions: { expiresIn: process.env.TOKEN_EXPIRE_TIME || '1h'}
+      signOptions: { expiresIn: process.env.TOKEN_EXPIRE_TIME || '1h' },
     }),
   ],
 })

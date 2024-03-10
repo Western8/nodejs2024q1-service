@@ -9,19 +9,16 @@ import {
   NotFoundException,
   Put,
   HttpCode,
-//  UseGuards,
 } from '@nestjs/common';
 import { ArtistService } from './artist.service';
 import { CreateArtistDto } from './dto/create-artist.dto';
 import { UpdateArtistDto } from './dto/update-artist.dto';
 import { IArtistRes } from './entities/artist.entity';
-//import { AuthGuard } from 'src/auth/auth.guard';
 
 @Controller('artist')
 export class ArtistController {
   constructor(private readonly artistService: ArtistService) {}
 
-//  @UseGuards(AuthGuard)
   @Get()
   async getAll() {
     return await this.artistService.getAll();

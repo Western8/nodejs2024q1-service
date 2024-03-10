@@ -1,25 +1,15 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { authDto } from './dto/auth.dto';
-import { IAuthRes, Auth } from './entities/auth.entity';
+import { authDto, refreshDto } from './dto/auth.dto';
+import { IAuthRes } from './entities/auth.entity';
 import { instanceToPlain } from 'class-transformer';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { CustomLogger } from 'src/logger/logger.service';
 import { JwtService } from '@nestjs/jwt';
 import { getHash } from 'src/utils/utils';
+import { User } from 'src/user/entities/user.entity';
 
 @Injectable()
 export class AuthService {
-  constructor(
-    private prisma: PrismaService,
-    private jwtService: JwtService
-  ) { }
-  //private readonly logger = new CustomLogger(UserService.name);
-
-  async getAll() {
-    const authDb = await this.prisma.auth.findMany();
-    const auth = authDb.map((item) => instanceToPlain(new Auth(item)));
-    return auth;
-  }
+  constructor(private prisma: PrismaService, private jwtService: JwtService) {}
 
   async signup(authDto: authDto): Promise<IAuthRes> {
     const authRes: IAuthRes = {
@@ -31,13 +21,15 @@ export class AuthService {
     if (!(keys.includes('login') && keys.includes('password'))) {
       return { code: 400 };
     }
-    if (!(authDto.login && authDto.password && (typeof authDto.login === 'string') && (typeof authDto.password === 'string'))) {
+    if (
+      !(
+        authDto.login &&
+        authDto.password &&
+        typeof authDto.login === 'string' &&
+        typeof authDto.password === 'string'
+      )
+    ) {
       return { code: 400 };
-    }
-
-    const user = await this.prisma.user.findFirst({ where: { login: authDto.login } });
-    if (user !== null) {
-      return { code: 403 };
     }
 
     const params = {
@@ -48,17 +40,9 @@ export class AuthService {
       createdAt: new Date().getTime(), // timestamp of creation
       updatedAt: new Date().getTime(), // timestamp of last update
     };
-    await this.prisma.user.create({ data: params });
+    const userDb = await this.prisma.user.create({ data: params });
+    authRes.user = instanceToPlain(new User(userDb));
     return authRes;
-    /*
-    const params = {
-      login: authDto.login,
-      password: passwordHash,
-    };
-    const authDb = await this.prisma.auth.create({ data: params });
-    authRes.auth = instanceToPlain(new Auth(authDb));
-    return authRes;
-    */
   }
 
   async login(authDto: authDto): Promise<IAuthRes> {
@@ -68,12 +52,20 @@ export class AuthService {
     if (!(keys.includes('login') && keys.includes('password'))) {
       return { code: 400 };
     }
-    if (!(authDto.login && authDto.password && (typeof authDto.login === 'string') && (typeof authDto.password === 'string'))) {
+    if (
+      !(
+        authDto.login &&
+        authDto.password &&
+        typeof authDto.login === 'string' &&
+        typeof authDto.password === 'string'
+      )
+    ) {
       return { code: 400 };
     }
 
-//  const auth = await this.prisma.auth.findUnique({ where: { login: authDto.login } });
-    const user = await this.prisma.user.findFirst({ where: { login: authDto.login } });
+    const user = await this.prisma.user.findFirst({
+      where: { login: authDto.login },
+    });
     if (user === null) {
       return { code: 403 };
     }
@@ -85,37 +77,67 @@ export class AuthService {
     const payload = {
       userId: user.id,
       login: user.login,
-    }
-    const accessToken = await this.jwtService.signAsync(payload);
-    authRes.accessToken = accessToken;
-    /*
-    const params = {
-      login: authDto.login,
-      password: authDto.password,
     };
-    const authDb = await this.prisma.auth.create({ data: params });
-    authRes.auth = instanceToPlain(new Auth(authDb));
-    */
+    const accessToken = await this.jwtService.signAsync(payload);
+    const refreshToken = await this.jwtService.signAsync(payload, {
+      secret: process.env.JWT_SECRET_REFRESH_KEY || 'secret',
+      expiresIn: process.env.TOKEN_REFRESH_EXPIRE_TIME || '30d',
+    });
+    await this.prisma.user.update({
+      where: { id: user.id },
+      data: { refreshToken },
+    });
+
+    authRes.accessToken = accessToken;
+    authRes.refreshToken = refreshToken;
     return authRes;
   }
 
-  async refresh(authDto: authDto) {
+  async refresh(refreshDto: refreshDto) {
     const authRes: IAuthRes = { code: 200 };
-    const keys: string[] = Object.keys(authDto);
+    const keys: string[] = Object.keys(refreshDto);
 
     if (!keys.includes('refreshToken')) {
       return { code: 401 };
     }
-    /*
-        const auth = await this.prisma.auth.findUnique({ where: { login: authDto.login } });
-        if (auth === null) {
-          return { code: 403 };
-        }
-        if (auth.password !== authDto.password) {
-          return { code: 403 };
-        }
-    */
+
+    let payloadRefresh = null;
+    try {
+      payloadRefresh = await this.jwtService.verifyAsync(
+        refreshDto.refreshToken,
+        {
+          secret: process.env.JWT_SECRET_REFRESH_KEY || 'secret',
+        },
+      );
+    } catch {
+      return { code: 403 };
+    }
+    const user = await this.prisma.user.findUnique({
+      where: { id: payloadRefresh.userId },
+    });
+    if (user === null) {
+      return { code: 403 };
+    }
+    if (user.refreshToken !== refreshDto.refreshToken) {
+      return { code: 403 };
+    }
+
+    const payload = {
+      userId: user.id,
+      login: user.login,
+    };
+    const accessToken = await this.jwtService.signAsync(payload);
+    const refreshToken = await this.jwtService.signAsync(payload, {
+      secret: process.env.JWT_SECRET_REFRESH_KEY || 'secret',
+      expiresIn: process.env.TOKEN_REFRESH_EXPIRE_TIME || '30d',
+    });
+    await this.prisma.user.update({
+      where: { id: user.id },
+      data: { refreshToken },
+    });
+
+    authRes.accessToken = accessToken;
+    authRes.refreshToken = refreshToken;
     return authRes;
   }
-
 }

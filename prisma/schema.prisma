@@ -13,11 +13,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Auth {
-  login     String @id
-  password  String
-}
-
 model User {
   id        String @id
   login     String
@@ -25,6 +20,7 @@ model User {
   version   Int
   createdAt BigInt
   updatedAt BigInt
+  refreshToken String?
 }
 
 model Artist {
