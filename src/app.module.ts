@@ -14,6 +14,8 @@ import { TrackModule } from './track/track.module';
 import { FavsModule } from './favs/favs.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { LoggerMiddleware } from './logger/logger.middleware';
+//import { AuthGuard } from './auth/auth.guard';
+//import { APP_GUARD } from '@nestjs/core';
 
 @Module({
   imports: [
@@ -26,7 +28,15 @@ import { LoggerMiddleware } from './logger/logger.middleware';
     PrismaModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    /*
+    {
+      provide: APP_GUARD,
+      useClass: AuthGuard
+    }
+    */
+  ],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

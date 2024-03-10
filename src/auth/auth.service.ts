@@ -4,11 +4,15 @@ import { IAuthRes, Auth } from './entities/auth.entity';
 import { instanceToPlain } from 'class-transformer';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CustomLogger } from 'src/logger/logger.service';
-import { createHash } from 'node:crypto';
+import { JwtService } from '@nestjs/jwt';
+import { getHash } from 'src/utils/utils';
 
 @Injectable()
 export class AuthService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private jwtService: JwtService
+  ) { }
   //private readonly logger = new CustomLogger(UserService.name);
 
   async getAll() {
@@ -18,22 +22,35 @@ export class AuthService {
   }
 
   async signup(authDto: authDto): Promise<IAuthRes> {
-    const authRes: IAuthRes = { code: 200 };
+    const authRes: IAuthRes = {
+      code: 201,
+      message: `User with login ${authDto.login} has created`,
+    };
     const keys: string[] = Object.keys(authDto);
 
     if (!(keys.includes('login') && keys.includes('password'))) {
       return { code: 400 };
     }
-    if (!(authDto.login && authDto.password && (typeof authDto.login === 'string') && (typeof authDto.password === 'string') )) {
+    if (!(authDto.login && authDto.password && (typeof authDto.login === 'string') && (typeof authDto.password === 'string'))) {
       return { code: 400 };
     }
 
-    const auth = await this.prisma.auth.findUnique({ where: { login: authDto.login } });
-    if (auth !== null) {
+    const user = await this.prisma.user.findFirst({ where: { login: authDto.login } });
+    if (user !== null) {
       return { code: 403 };
     }
 
-    const passwordHash = this.getHashe(authDto.password);
+    const params = {
+      id: crypto.randomUUID(), // uuid v4
+      login: authDto.login,
+      password: getHash(authDto.password),
+      version: 1, // integer number, increments on update
+      createdAt: new Date().getTime(), // timestamp of creation
+      updatedAt: new Date().getTime(), // timestamp of last update
+    };
+    await this.prisma.user.create({ data: params });
+    return authRes;
+    /*
     const params = {
       login: authDto.login,
       password: passwordHash,
@@ -41,6 +58,7 @@ export class AuthService {
     const authDb = await this.prisma.auth.create({ data: params });
     authRes.auth = instanceToPlain(new Auth(authDb));
     return authRes;
+    */
   }
 
   async login(authDto: authDto): Promise<IAuthRes> {
@@ -50,19 +68,26 @@ export class AuthService {
     if (!(keys.includes('login') && keys.includes('password'))) {
       return { code: 400 };
     }
-    if (!(authDto.login && authDto.password && (typeof authDto.login === 'string') && (typeof authDto.password === 'string') )) {
+    if (!(authDto.login && authDto.password && (typeof authDto.login === 'string') && (typeof authDto.password === 'string'))) {
       return { code: 400 };
     }
 
-    const auth = await this.prisma.auth.findUnique({ where: { login: authDto.login } });
-    if (auth === null) {
+//  const auth = await this.prisma.auth.findUnique({ where: { login: authDto.login } });
+    const user = await this.prisma.user.findFirst({ where: { login: authDto.login } });
+    if (user === null) {
       return { code: 403 };
     }
-    const passwordHash = this.getHashe(authDto.password);
-    if (auth.password !== passwordHash) {
+    const passwordHash = getHash(authDto.password);
+    if (user.password !== passwordHash) {
       return { code: 403 };
     }
-    
+
+    const payload = {
+      userId: user.id,
+      login: user.login,
+    }
+    const accessToken = await this.jwtService.signAsync(payload);
+    authRes.accessToken = accessToken;
     /*
     const params = {
       login: authDto.login,
@@ -81,23 +106,16 @@ export class AuthService {
     if (!keys.includes('refreshToken')) {
       return { code: 401 };
     }
-/*
-    const auth = await this.prisma.auth.findUnique({ where: { login: authDto.login } });
-    if (auth === null) {
-      return { code: 403 };
-    }
-    if (auth.password !== authDto.password) {
-      return { code: 403 };
-    }
-*/
+    /*
+        const auth = await this.prisma.auth.findUnique({ where: { login: authDto.login } });
+        if (auth === null) {
+          return { code: 403 };
+        }
+        if (auth.password !== authDto.password) {
+          return { code: 403 };
+        }
+    */
     return authRes;
-  }
-
-  getHashe(data: string): string {
-    const hash = createHash('sha256');
-    hash.update(data);
-    const dataHash = hash.digest('hex');
-    return dataHash;
   }
 
 }

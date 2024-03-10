@@ -11,6 +11,7 @@ import {
 import { AuthService } from './auth.service';
 import { authDto } from './dto/auth.dto';
 import { IAuthRes } from './entities/auth.entity';
+import { Public } from './auth.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -21,6 +22,7 @@ export class AuthController {
     return await this.authService.getAll();
   }
 
+  @Public()
   @Post('signup')
   @HttpCode(201)
   async signup(@Body() authDto: authDto) {
@@ -30,9 +32,10 @@ export class AuthController {
     } else if (authRes.code === 403) {
       throw new ForbiddenException(`Login already exists`);
     }
-    return authRes.auth;
+    return authRes.message;
   }
 
+  @Public()
   @Post('login')
   @HttpCode(200)
   async login(@Body() authDto: authDto) {
@@ -42,7 +45,7 @@ export class AuthController {
     } else if (authRes.code === 403) {
       throw new ForbiddenException(`Not correct login OR password!`);
     }
-    return authRes.tokens;
+    return authRes.accessToken;
   }
 
   @Post('refresh')

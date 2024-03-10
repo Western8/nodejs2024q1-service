@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { IUserRes, User } from './entities/user.entity';
-import { isUUID } from 'src/utils/utils';
+import { getHash, isUUID } from 'src/utils/utils';
 import { instanceToPlain } from 'class-transformer';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CustomLogger } from 'src/logger/logger.service';
@@ -46,7 +46,8 @@ export class UserService {
     const params = {
       id: crypto.randomUUID(), // uuid v4
       login: createUserDto.login,
-      password: createUserDto.password,
+      password: getHash(createUserDto.password),
+//    password: createUserDto.password,
       version: 1, // integer number, increments on update
       createdAt: new Date().getTime(), // timestamp of creation
       updatedAt: new Date().getTime(), // timestamp of last update
@@ -75,7 +76,8 @@ export class UserService {
       return { code: 404 };
     }
     if (
-      user.password !== updateUserDto.oldPassword ||
+//    user.password !== updateUserDto.oldPassword ||
+      user.password !== getHash(updateUserDto.oldPassword) ||
       updateUserDto.newPassword === updateUserDto.oldPassword
     ) {
       return { code: 403 };
@@ -83,7 +85,8 @@ export class UserService {
     const userDb = await this.prisma.user.update({
       where: { id: id },
       data: {
-        password: updateUserDto.newPassword,
+    //  password: updateUserDto.newPassword,
+        password: getHash(updateUserDto.newPassword),
         updatedAt: new Date().getTime(),
         version: user.version + 1,
       },

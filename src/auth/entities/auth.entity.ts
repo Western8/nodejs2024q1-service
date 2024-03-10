@@ -17,4 +17,5 @@ export interface IAuthRes {
   message?: string;
   auth?: Record<string, any>;
   tokens?: string;
+  accessToken?: string;
 }
