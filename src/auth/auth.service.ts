@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { authDto, refreshDto } from './dto/auth.dto';
 import { IAuthRes } from './entities/auth.entity';
 import { instanceToPlain } from 'class-transformer';
@@ -74,20 +74,7 @@ export class AuthService {
       return { code: 403 };
     }
 
-    const payload = {
-      userId: user.id,
-      login: user.login,
-    };
-    const accessToken = await this.jwtService.signAsync(payload);
-    const refreshToken = await this.jwtService.signAsync(payload, {
-      secret: process.env.JWT_SECRET_REFRESH_KEY || 'secret',
-      expiresIn: process.env.TOKEN_REFRESH_EXPIRE_TIME || '30d',
-    });
-    await this.prisma.user.update({
-      where: { id: user.id },
-      data: { refreshToken },
-    });
-
+    const { accessToken, refreshToken } = await this.getTokens(user);
     authRes.accessToken = accessToken;
     authRes.refreshToken = refreshToken;
     return authRes;
@@ -106,7 +93,7 @@ export class AuthService {
       payloadRefresh = await this.jwtService.verifyAsync(
         refreshDto.refreshToken,
         {
-          secret: process.env.JWT_SECRET_REFRESH_KEY || 'secret',
+          secret: process.env.JWT_SECRET_REFRESH_KEY || 'secretRefresh',
         },
       );
     } catch {
@@ -122,22 +109,30 @@ export class AuthService {
       return { code: 403 };
     }
 
+    const { accessToken, refreshToken } = await this.getTokens(user);
+    authRes.accessToken = accessToken;
+    authRes.refreshToken = refreshToken;
+    return authRes;
+  }
+
+  async getTokens(user) {
     const payload = {
       userId: user.id,
       login: user.login,
     };
     const accessToken = await this.jwtService.signAsync(payload);
     const refreshToken = await this.jwtService.signAsync(payload, {
-      secret: process.env.JWT_SECRET_REFRESH_KEY || 'secret',
+      secret: process.env.JWT_SECRET_REFRESH_KEY || 'secretRefresh',
       expiresIn: process.env.TOKEN_REFRESH_EXPIRE_TIME || '30d',
     });
     await this.prisma.user.update({
       where: { id: user.id },
       data: { refreshToken },
     });
-
-    authRes.accessToken = accessToken;
-    authRes.refreshToken = refreshToken;
-    return authRes;
+    const tokens = {
+      accessToken,
+      refreshToken,
+    };
+    return tokens;
   }
 }

@@ -3,12 +3,14 @@ import {
   Post,
   Body,
   BadRequestException,
+  UnauthorizedException,
   ForbiddenException,
   HttpCode,
+  UseGuards,
 } from '@nestjs/common';
-import { AuthService } from './auth.service';
 import { authDto, refreshDto } from './dto/auth.dto';
-import { Public } from './auth.guard';
+import { AuthService } from './auth.service';
+import { AuthGuardRefresh, Public } from './auth.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -40,12 +42,14 @@ export class AuthController {
     return authRes;
   }
 
+  @Public()
+  @UseGuards(AuthGuardRefresh)
   @Post('refresh')
   @HttpCode(200)
   async refresh(@Body() refreshDto: refreshDto) {
     const authRes = await this.authService.refresh(refreshDto);
     if (authRes.code === 401) {
-      throw new BadRequestException(
+      throw new UnauthorizedException(
         'Incorrect refresh token fields OR no refresh token',
       );
     } else if (authRes.code === 403) {
