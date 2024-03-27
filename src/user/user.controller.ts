@@ -27,8 +27,6 @@ export class UserController {
 
   @Get(':id')
   async getOne(@Param('id') id: string) {
-    //throw new Error('Craasssh!!!!!');
-    //const userRes: IUserRes = this.userService.getOne(id);
     const userRes = await this.userService.getOne(id);
     if (userRes.code === 400) {
       throw new BadRequestException('Invalid user id');
@@ -40,7 +38,6 @@ export class UserController {
 
   @Post()
   async create(@Body() createUserDto: CreateUserDto) {
-    //const userRes: Promise<IUserRes> = await this.userService.create(createUserDto);
     const userRes = await this.userService.create(createUserDto);
     if (userRes.code === 400) {
       throw new BadRequestException('Incorrect users fields');
@@ -51,7 +48,6 @@ export class UserController {
   @Put(':id')
   async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     const userRes = await this.userService.update(id, updateUserDto);
-    //const userRes: IUserRes = this.userService.update(id, updateUserDto);
     if (userRes.code === 400) {
       throw new BadRequestException(userRes.message);
     } else if (userRes.code === 404) {
@@ -66,7 +62,6 @@ export class UserController {
   @HttpCode(204)
   async delete(@Param('id') id: string) {
     const userRes: IUserRes = await this.userService.delete(id);
-    // const userRes: IUserRes = this.userService.delete(id);
     if (userRes.code === 400) {
       throw new BadRequestException('Invalid user id');
     } else if (userRes.code === 404) {

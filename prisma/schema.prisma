@@ -20,6 +20,7 @@ model User {
   version   Int
   createdAt BigInt
   updatedAt BigInt
+  refreshToken String?
 }
 
 model Artist {

@@ -6,6 +6,7 @@ CREATE TABLE "User" (
     "version" INTEGER NOT NULL,
     "createdAt" BIGINT NOT NULL,
     "updatedAt" BIGINT NOT NULL,
+    "refreshToken" TEXT,
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("id")
 );
